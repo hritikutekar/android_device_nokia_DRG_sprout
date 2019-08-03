@@ -24,6 +24,10 @@
 $(call inherit-product, vendor/nokia/DRG_sprout/DRG_sprout-vendor.mk)
 
 
+# Vendor properties
+-include $(LOCAL_PATH)/vendor_prop.mk
+
+
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
