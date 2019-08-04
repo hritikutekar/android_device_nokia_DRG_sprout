@@ -22,21 +22,17 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_o_mr1.mk
 # Inherit from DRG_sprout device
 $(call inherit-product, device/nokia/DRG_sprout/device.mk)
 
-# Inherit some common onui stuff.
-ONUI_BUILDTYPE := OFFICIAL
+# Inherit some common PixelExperience stuff.
 TARGET_BOOT_ANIMATION_RES := 1080
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
-
-# Gapps
 TARGET_GAPPS_ARCH := arm64
-IS_PHONE := true
+$(call inherit-product, vendor/aosp/config/common_full_phone.mk)
 
 # A/B updater
 AB_OTA_UPDATER := true
 
 AB_OTA_PARTITIONS += \
     boot \
-    system 
+    system
 
 AB_OTA_POSTINSTALL_CONFIG += \
     RUN_POSTINSTALL_system=true \
@@ -66,7 +62,7 @@ PRODUCT_STATIC_BOOT_CONTROL_HAL := \
     libz
 
 # Device identifiers
-PRODUCT_NAME := onui_DRG_sprout
+PRODUCT_NAME := aosp_DRG_sprout
 PRODUCT_BRAND := nokia
 PRODUCT_DEVICE := DRG_sprout
 PRODUCT_MANUFACTURER := nokia
