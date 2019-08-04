@@ -27,8 +27,8 @@ $(call inherit-product, vendor/nokia/DRG_sprout/DRG_sprout-vendor.mk)
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay
 
-PRODUCT_ENFORCE_RRO_TARGETS := \
-    framework-res
+PRODUCT_PACKAGES += \
+    NoCutoutOverlay
 
 # Permissions
 PRODUCT_COPY_FILES += \
