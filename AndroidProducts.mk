@@ -14,5 +14,5 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/onui_DRG_sprout.mk \
+    $(LOCAL_DIR)/lineage_DRG_sprout.mk \
 
