@@ -198,6 +198,7 @@ TARGET_USERIMAGES_USE_F2FS := true
 
 # vendor
 TARGET_COPY_OUT_VENDOR := vendor
+BOARD_PREBUILT_VENDORIMAGE := vendor/nokia/DRG_sprout/proprietary/vendor.img
 
 # Power
 TARGET_USES_INTERACTION_BOOST := true
