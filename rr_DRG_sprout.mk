@@ -24,7 +24,7 @@ $(call inherit-product, device/nokia/DRG_sprout/device.mk)
 
 # Inherit some common lineage stuff.
 TARGET_BOOT_ANIMATION_RES := 1080
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, vendor/resurrection/config/common_full_phone.mk)
 
 # A/B updater
 AB_OTA_UPDATER := true
@@ -62,7 +62,7 @@ PRODUCT_STATIC_BOOT_CONTROL_HAL := \
     libz
 
 # Device identifiers
-PRODUCT_NAME := lineage_DRG_sprout
+PRODUCT_NAME := rr_DRG_sprout
 PRODUCT_BRAND := nokia
 PRODUCT_DEVICE := DRG_sprout
 PRODUCT_MANUFACTURER := nokia
