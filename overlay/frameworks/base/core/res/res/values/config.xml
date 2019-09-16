@@ -130,6 +130,9 @@
     <!-- True if the firmware supports connected MAC randomization -->
     <bool name="config_wifi_connected_mac_randomization_supported">true</bool>
 
+    <!-- True if the firmware supports Wi-Fi link probing -->
+    <bool name="config_wifi_link_probing_supported">true</bool>
+
     <!-- If this is true, the screen will come on when you plug/unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
