@@ -103,6 +103,7 @@ on late-fs
 
 on post-fs
     chmod 0755 /sys/kernel/debug/tracing
+    chown system system /sys/class/timed_output/vibrator/vtg_level
     # Change permission for fingerprint sensor
     chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/nav
     chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/dev_enable
@@ -519,6 +520,9 @@ on post-fs-data
     chmod 0664 /sys/devices/platform/msm_sdcc.2/polling
     chmod 0664 /sys/devices/platform/msm_sdcc.3/polling
     chmod 0664 /sys/devices/platform/msm_sdcc.4/polling
+
+    chown system system /sys/class/timed_output/vibrator/vtg_level    
+    chmod 0660 /sys/class/timed_output/vibrator/vtg_level
 
     # Chown polling nodes as needed from UI running on system server
     chown system system /sys/devices/platform/msm_sdcc.1/polling
