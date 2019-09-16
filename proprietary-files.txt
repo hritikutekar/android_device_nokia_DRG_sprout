@@ -87,7 +87,6 @@ etc/permissions/telephonyservice.xml|b297c8a27443570377d78586b00198839ce326bb
 # priv-apps
 -priv-app/CNEService/CNEService.apk|cb67095b6f807e713375327032a896562549975c
 -priv-app/dpmserviceapp/dpmserviceapp.apk|319d3f8977cb167f062b23ae7f15ea37c83c20ab
--priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk|d1d3adfe6eff32a3013e146317324029181e3c4a
 -priv-app/ims/ims.apk|e42e8f26feb0ef7cd3effd4cedfdd5ba4641dd6a
 
 # apps
