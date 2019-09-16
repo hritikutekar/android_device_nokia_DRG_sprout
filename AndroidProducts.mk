@@ -14,5 +14,8 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_DRG_sprout.mk \
+    $(LOCAL_DIR)/aosp_DRG_sprout.mk \
 
+COMMON_LUNCH_CHOICES := \
+    aosp_DRG_sprout-userdebug \
+    aosp_DRG_sprout-eng

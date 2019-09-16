@@ -168,8 +168,8 @@ PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl
 
 # Doze
-PRODUCT_PACKAGES += \
-    NokiaDoze
+# PRODUCT_PACKAGES += \
+#     NokiaDoze
 
 # DRM
 PRODUCT_PACKAGES += \
@@ -282,8 +282,8 @@ PRODUCT_PACKAGES += \
     android.hardware.light@2.0-service.nokia_sdm660
 
 # LiveDisplay native
-PRODUCT_PACKAGES += \
-    vendor.lineage.livedisplay@2.0-service-sdm
+# PRODUCT_PACKAGES += \
+#     vendor.lineage.livedisplay@2.0-service-sdm
 
 
 # Media

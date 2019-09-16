@@ -24,12 +24,11 @@ $(call inherit-product, device/nokia/DRG_sprout/device.mk)
 
 # Inherit some common Lineageos stuff.
 TARGET_BOOT_ANIMATION_RES := 1080
-$(call inherit-product, vendor/lineage/config/common_full_phone.mk)
+$(call inherit-product, vendor/aosp/config/common_full_phone.mk)
 
 # Gapps
 TARGET_GAPPS_ARCH := arm64
 IS_PHONE := true
-$(call inherit-product, vendor/gapps/config.mk)
 
 # A/B updater
 AB_OTA_UPDATER := true
@@ -67,7 +66,7 @@ PRODUCT_STATIC_BOOT_CONTROL_HAL := \
     libz
 
 # Device identifiers
-PRODUCT_NAME := lineage_DRG_sprout
+PRODUCT_NAME := aosp_DRG_sprout
 PRODUCT_BRAND := nokia
 PRODUCT_DEVICE := DRG_sprout
 PRODUCT_MANUFACTURER := nokia
