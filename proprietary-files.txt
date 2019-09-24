@@ -20,7 +20,6 @@ framework/vendor.qti.ims.callinfo-V1.0-java.jar|a22124c211fe1a58ae0a2970f6aa1adc
 framework/vendor.qti.ims.rcsconfig-V1.0-java.jar|cb06d8276ca9cb0662a4f7de1f0d86504ab91ebc
 framework/embmslibrary.jar|180d4d6b65d989023364457eb1bf6e1d45f7e274
 framework/qcrilhook.jar|f855170942e69b1e698feecbbc912b9c3257df87
-framework/qti-telephony-common.jar|e529711775c31da38c9ecd1ab94b27ee15570dc4
 framework/QtiTelephonyServicelibrary.jar|380a795a81900d24c3092ea27f0eb4f77b0da78c
 framework/com.qti.dpmframework.jar|4bdeade509cb417033402c8abbb3bfe7fbf155d0
 framework/dpmapi.jar|4940bdc99ec676e8c6372057f91ffc303f72b49d
@@ -29,8 +28,6 @@ framework/tcmclient.jar|d63f61a2905cc48f0eed56cce5dc0ca80f7ada3a
 # lib
 lib/com.qualcomm.qti.ant@1.0.so|fcd6a7130c480bfe4e4d9cc00702ed8444cddc82
 -lib/libantradio.so|7506f2577f2f1068688b623ca85e432be9c3dac9
-lib/libskia.so:vendor/lib/libskia.so
-lib/libtrueportrait.so:vendor/lib/libtrueportrait.so
 lib/libicuuc.so:vendor/lib/libicuuc-v27.so
 lib/libminikin.so:vendor/lib/libminikin-v27.so
 lib/libfm-hci.so|b066567e07279bf59e78f7d318302dd706bb80fe
@@ -63,7 +60,6 @@ lib64/fm_helium.so|e41e3a18f5a0dc666adad471e7332c707b4d2044
 -lib64/vendor.qti.hardware.fm@1.0.so|dc576dfcb0bf390a106b5ed8861e7f547110cbf1
 lib64/libmmosal.so|3d50c7ea56db9c3676be9d6e36e1030386ecdb02
 lib64/vendor.qti.hardware.vpp@1.1.so|8e39a979aac1aa7002ef4e50c74878177ee755f7
-lib64/libsoftkeymaster.so:vendor/lib64/libsoftkeymaster.so
 
 # bin
 bin/dpmd|6c511738d83ba1cfdc75b00b9bd676d231914f3a
@@ -94,9 +90,6 @@ etc/permissions/telephonyservice.xml|b297c8a27443570377d78586b00198839ce326bb
 -app/datastatusnotification/datastatusnotification.apk|ceafcce87298531a3adb13a87709a1fd65291625
 -app/embms/embms.apk|b9999b9cd6869a424b156183d52cd70830fa509f
 -app/QtiTelephonyService/QtiTelephonyService.apk|420b39e20a5166940c1e2e55e8d9c92ec910cebb
--app/imssettings/imssettings.apk|20d9b2c3f5939d4bfa7c03b5383d0cf03dbbc39e
-
-
 
 # ADSP
 vendor/bin/adsprpcd
@@ -1261,12 +1254,8 @@ vendor/lib64/libtime_genoff.so
 -vendor/app/TrustZoneAccessService/TrustZoneAccessService.apk
 
 # SSGTelemetry Service
--vendor/app/SSGTelemetryService/SSGTelemetryService.apk
 vendor/bin/ssgqmigd
 vendor/bin/ssgtzd
-
-# ConnectionSecurity Service
--vendor/app/ConnectionSecurityService/ConnectionSecurityService.apk
 
 # Wifi
 vendor/bin/cnss-daemon
