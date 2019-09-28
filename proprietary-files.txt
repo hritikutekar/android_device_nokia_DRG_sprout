@@ -180,14 +180,26 @@ vendor/etc/acdbdata/DRG/sdm660-snd-card-drg/Headset_cal.acdb
 vendor/etc/acdbdata/DRG/sdm660-snd-card-drg/Speaker_cal.acdb
 vendor/etc/acdbdata/DRG/sdm660-snd-card-drg/workspaceFile.qwsp
 vendor/etc/acdbdata/adsp_avs_config.acdb
-
+ 
 # Bluetooth
+vendor/bt_firmware/image/apbtfw10.tlv
+vendor/bt_firmware/image/apnv10.bin
+vendor/bt_firmware/image/crbtfw11.tlv
+vendor/bt_firmware/image/crnv21.bin
+vendor/bt_firmware/image/crbtfw21.tlv
+vendor/bt_firmware/image/crnv20.bin
+vendor/bt_firmware/image/apbtfw11.tlv
+vendor/bt_firmware/image/apnv11.bin
+vendor/bt_firmware/image/crbtfw20.tlv
+vendor/bt_firmware/image/crnv11.bin
 vendor/bin/hci_qcomm_init
 vendor/bin/hw/android.hardware.bluetooth@1.0-service-qti
 vendor/etc/init/android.hardware.bluetooth@1.0-service-qti.rc
+vendor/lib/com.qualcomm.qti.bluetooth_audio@1.0.so
 vendor/lib/hw/android.hardware.bluetooth@1.0-impl-qti.so
 vendor/lib/libbt-hidlclient.so
 vendor/lib/libbtnv.so
+vendor/lib64/com.qualcomm.qti.bluetooth_audio@1.0.so
 vendor/lib64/hw/android.hardware.bluetooth@1.0-impl-qti.so
 vendor/lib64/libbt-hidlclient.so
 vendor/lib64/libbtnv.so
@@ -388,6 +400,8 @@ vendor/lib/libmmjpeg.so
 vendor/lib/libmmqjpeg_codec.so
 vendor/lib/libmmqjpegdma.so
 vendor/lib/libmpbase.so
+vendor/lib/libMGBeauty.so
+vendor/lib/libMegviiFacepp.so
 vendor/lib/libqomx_jpegdec.so
 vendor/lib/libqomx_jpegenc_pipe.so
 vendor/lib/libqomx_jpegenc.so
@@ -731,6 +745,15 @@ vendor/firmware/cpp_firmware_v1_6_0.fw
 vendor/firmware/cpp_firmware_v1_8_0.fw
 vendor/firmware/cpp_firmware_v1_10_0.fw
 vendor/firmware/cpp_firmware_v1_12_0.fw
+vendor/firmware/cppf.b00
+vendor/firmware/cppf.b01
+vendor/firmware/cppf.b02
+vendor/firmware/cppf.b03
+vendor/firmware/cppf.b04
+vendor/firmware/cppf.b05
+vendor/firmware/cppf.b06
+vendor/firmware/cppf.b07
+vendor/firmware/cppf.mdt
 
 # Camera OIS
 vendor/lib/libois_bu63165.so
@@ -767,6 +790,14 @@ vendor/etc/cne/wqeclient/VZW/VZW_profile3.xml
 vendor/etc/cne/wqeclient/VZW/VZW_profile4.xml
 vendor/etc/cne/wqeclient/VZW/VZW_profile5.xml
 vendor/etc/cne/wqeclient/VZW/VZW_profile6.xml
+-vendor/lib/com.quicinc.cne.api@1.0.so
+-vendor/lib/com.quicinc.cne.api@1.1.so
+-vendor/lib/com.quicinc.cne.constants@1.0.so
+-vendor/lib/com.quicinc.cne.constants@2.0.so
+-vendor/lib/com.quicinc.cne.constants@2.1.so
+-vendor/lib/com.quicinc.cne.server@2.0.so
+-vendor/lib/com.quicinc.cne.server@2.1.so
+-vendor/lib/com.quicinc.cne.server@2.2.so
 -vendor/lib64/com.quicinc.cne.api@1.0.so
 -vendor/lib64/com.quicinc.cne.api@1.1.so
 -vendor/lib64/com.quicinc.cne.constants@1.0.so
@@ -790,6 +821,7 @@ vendor/lib64/vendor.qti.latency@2.0.so
 
 # DPM
 vendor/bin/dpmQmiMgr
+vendor/lib/com.qualcomm.qti.dpm.api@1.0.so
 vendor/lib64/libdpmqmihal.so
 vendor/lib64/com.qualcomm.qti.dpm.api@1.0.so
 
@@ -797,6 +829,12 @@ vendor/lib64/com.qualcomm.qti.dpm.api@1.0.so
 vendor/bin/qseecomd
 vendor/lib/libQSEEComAPI.so
 vendor/lib/libsdedrm.so
+vendor/lib/libGPQTEEC_vendor.so
+vendor/lib/libGPTEE_vendor.so
+vendor/lib/libGPreqcancel_svc.so
+vendor/lib/libGPreqcancel.so
+vendor/lib64/libGPTEE_vendor.so
+vendor/lib64/libGPQTEEC_vendor.so
 vendor/lib64/libdrmfs.so
 vendor/lib64/libdrmtime.so
 vendor/lib64/libGPreqcancel_svc.so
@@ -812,7 +850,32 @@ vendor/lib64/libssd.so
 vendor/lib64/libStDrvInt.so
 vendor/lib64/libtzdrmgenprov.so
 
-# DRM
+# DRM firmware
+vendor/firmware/cmnlib.b00
+vendor/firmware/cmnlib.b01
+vendor/firmware/cmnlib.b02
+vendor/firmware/cmnlib.b03
+vendor/firmware/cmnlib.b04
+vendor/firmware/cmnlib.b05
+vendor/firmware/cmnlib.b06
+vendor/firmware/cmnlib.mdt
+vendor/firmware/cmnlib64.b00
+vendor/firmware/cmnlib64.b01
+vendor/firmware/cmnlib64.b02
+vendor/firmware/cmnlib64.b03
+vendor/firmware/cmnlib64.b04
+vendor/firmware/cmnlib64.b05
+vendor/firmware/cmnlib64.b06
+vendor/firmware/cmnlib64.mdt
+vendor/firmware/widevine.b00
+vendor/firmware/widevine.b01
+vendor/firmware/widevine.b02
+vendor/firmware/widevine.b03
+vendor/firmware/widevine.b04
+vendor/firmware/widevine.b05
+vendor/firmware/widevine.b06
+vendor/firmware/widevine.b07
+vendor/firmware/widevine.mdt
 vendor/bin/hw/android.hardware.drm@1.1-service.widevine
 vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc
 vendor/lib/mediadrm/libwvdrmengine.so
@@ -837,8 +900,37 @@ vendor/firmware/gxfp3258_drg.b05
 vendor/firmware/gxfp3258_drg.b06
 vendor/firmware/gxfp3258_drg.b07
 vendor/firmware/gxfp3258_drg.mdt
+vendor/firmware/elanfp64.b00
+vendor/firmware/elanfp64.b01
+vendor/firmware/elanfp64.b02
+vendor/firmware/elanfp64.b03
+vendor/firmware/elanfp64.b04
+vendor/firmware/elanfp64.b05
+vendor/firmware/elanfp64.b06
+vendor/firmware/elanfp64.b07
+vendor/firmware/elanfp64.mdt
+vendor/firmware/fpctzappfingerprint.b00
+vendor/firmware/fpctzappfingerprint.b01
+vendor/firmware/fpctzappfingerprint.b02
+vendor/firmware/fpctzappfingerprint.b03
+vendor/firmware/fpctzappfingerprint.b04
+vendor/firmware/fpctzappfingerprint.b05
+vendor/firmware/fpctzappfingerprint.b06
+vendor/firmware/fpctzappfingerprint.b07
+vendor/firmware/fpctzappfingerprint.mdt
+vendor/firmware/goodix_config.cfg
+vendor/firmware/goodix_config_hlt.cfg
+vendor/firmware/goodix_config_oflim.cfg
+vendor/firmware/goodix_config_truly.cfg
+vendor/firmware/goodix_firmware.bin
+vendor/firmware/goodix_firmware_hlt.bin
+vendor/firmware/goodix_firmware_oflim.bin
+vendor/firmware/goodix_firmware_truly.bin
 
 # Fingerprint sensor
+vendor/framework/com.fingerprints.extension.jar
+vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service
+vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service_fpc
 vendor/lib/vendor.qti.hardware.fingerprint@1.0.so
 vendor/lib64/hw/fingerprint.elan.so
 vendor/lib64/hw/fingerprint.gxfp3258_drg.so
@@ -851,13 +943,19 @@ vendor/lib64/vendor.qti.hardware.fingerprint@1.0.so
 
 # FM
 vendor/bin/fm_qsoc_patches
+vendor/lib/ftm_fm_lib.so
 vendor/lib/hw/vendor.qti.hardware.fm@1.0-impl.so
 vendor/lib/vendor.qti.hardware.fm@1.0.so
+vendor/lib64/ftm_fm_lib.so
 vendor/lib64/hw/vendor.qti.hardware.fm@1.0-impl.so
 vendor/lib64/vendor.qti.hardware.fm@1.0.so
 
 # Gatekeeper
+vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qti
+vendor/etc/init/android.hardware.gatekeeper@1.0-service-qti.rc
 vendor/lib/hw/gatekeeper.sdm660.so
+vendor/lib/hw/android.hardware.gatekeeper@1.0-impl-qti.so
+vendor/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so
 vendor/lib64/hw/gatekeeper.sdm660.so
 
 # GPS
@@ -871,6 +969,7 @@ vendor/bin/xtra-daemon
 vendor/etc/cacert_location.pem
 vendor/etc/xtra_root_cert.pem
 vendor/etc/init/vendor.qti.gnss@2.0-service.rc
+vendor/lib/libDRPlugin.so
 vendor/lib64/hw/vendor.qti.gnss@2.0-impl.so
 vendor/lib64/lib_drplugin_server.so
 vendor/lib64/libalarmservice_jni.so
@@ -901,7 +1000,21 @@ vendor/lib64/vendor.qti.gnss@1.1.so
 vendor/lib64/vendor.qti.gnss@1.2.so
 vendor/lib64/vendor.qti.gnss@2.0.so
 
-# GPU firmware
+# Graphics - Firmwares
+vendor/firmware/a225_pfp.fw
+vendor/firmware/a225_pm4.fw
+vendor/firmware/a225p5_pm4.fw
+vendor/firmware/a300_pfp.fw
+vendor/firmware/a300_pm4.fw
+vendor/firmware/a330_pfp.fw
+vendor/firmware/a330_pm4.fw
+vendor/firmware/a420_pfp.fw
+vendor/firmware/a420_pm4.fw
+vendor/firmware/a508_zap.b00
+vendor/firmware/a508_zap.b01
+vendor/firmware/a508_zap.b02
+vendor/firmware/a508_zap.elf
+vendor/firmware/a508_zap.mdt
 vendor/firmware/a512_zap.b00
 vendor/firmware/a512_zap.b01
 vendor/firmware/a512_zap.b02
@@ -915,6 +1028,9 @@ vendor/firmware/a530v1_pm4.fw
 vendor/firmware/a530v2_seq.fw2
 vendor/firmware/a530v3_gpmu.fw2
 vendor/firmware/a530v3_seq.fw2
+vendor/firmware/a540_gpmu.fw2
+vendor/firmware/leia_pfp_470.fw
+vendor/firmware/leia_pm4_470.fw
 
 # Graphics
 vendor/lib64/egl/eglSubDriverAndroid.so
@@ -924,6 +1040,7 @@ vendor/lib64/egl/libGLESv2_adreno.so
 vendor/lib64/egl/libq3dtools_adreno.so
 vendor/lib64/egl/libq3dtools_esx.so
 vendor/lib64/egl/libQTapGLES.so
+vendor/lib64/libEGL_adreno.so
 vendor/lib64/libadreno_utils.so
 vendor/lib64/libbccQTI.so
 vendor/lib64/libC2D2.so
@@ -943,6 +1060,7 @@ vendor/lib/egl/libGLESv2_adreno.so
 vendor/lib/egl/libq3dtools_adreno.so
 vendor/lib/egl/libq3dtools_esx.so
 vendor/lib/egl/libQTapGLES.so
+vendor/lib/libEGL_adreno.so
 vendor/lib/libadreno_utils.so
 vendor/lib/libbccQTI.so
 vendor/lib/libC2D2.so
@@ -976,6 +1094,19 @@ vendor/lib64/libtinyxml2_1.so|9d5179eda8ce70b9a4014b144f9d23d33509fddc
 # Graphics (Vulkan)
 vendor/lib/hw/vulkan.sdm660.so
 vendor/lib64/hw/vulkan.sdm660.so
+
+# Keymaster
+vendor/bin/hw/android.hardware.keymaster@3.0-service-qti
+vendor/bin/hw/android.hardware.keymaster@4.0-service-qti
+vendor/etc/init/android.hardware.keymaster@3.0-service-qti.rc
+vendor/lib/hw/android.hardware.keymaster@3.0-impl-qti.so
+vendor/lib/libkeymasterdeviceutils.so
+vendor/lib/libkeymasterprovision.so
+vendor/lib/libkeymasterutils.so
+vendor/lib64/hw/android.hardware.keymaster@3.0-impl-qti.so
+vendor/lib64/libkeymasterdeviceutils.so
+vendor/lib64/libkeymasterprovision.so
+vendor/lib64/libkeymasterutils.so
 
 # Keystore
 vendor/lib/hw/keystore.sdm660.so
@@ -1138,6 +1269,7 @@ vendor/bin/port-bridge
 vendor/bin/rmt_storage
 vendor/bin/tftp_server
 vendor/bin/hw/qcrild
+vendor/bin/hw/rild
 vendor/etc/data/dsi_config.xml
 vendor/etc/data/netmgr_config.xml
 vendor/etc/init/qcrild.rc
@@ -1186,6 +1318,23 @@ vendor/bin/ims_rtp_daemon
 vendor/bin/imsdatadaemon
 vendor/bin/imsqmidaemon
 vendor/bin/imsrcsd
+vendor/lib/lib-dplmedia.so
+vendor/lib/lib-imscmservice.so
+vendor/lib/lib-imsdpl.so
+vendor/lib/lib-imsqimf.so
+vendor/lib/lib-imsrcs-v2.so
+vendor/lib/lib-imsrcsbaseimpl.so
+vendor/lib/lib-imsxml.so
+vendor/lib/lib-rtpcommon.so
+vendor/lib/lib-rtpcore.so
+vendor/lib/lib-rtpdaemoninterface.so
+vendor/lib/lib-rtpsl.so
+vendor/lib/lib-uceservice.so
+vendor/lib/lib-siputility.so
+vendor/lib/com.qualcomm.qti.imscmservice@1.0.so
+vendor/lib/com.qualcomm.qti.imscmservice@2.0.so
+vendor/lib/com.qualcomm.qti.imscmservice@2.1.so
+vendor/lib/com.qualcomm.qti.uceservice@2.0.so
 vendor/lib64/com.qualcomm.qti.imscmservice@1.0.so
 vendor/lib64/com.qualcomm.qti.imscmservice@2.0.so
 vendor/lib64/com.qualcomm.qti.imscmservice@2.1.so
@@ -1272,3 +1421,67 @@ vendor/lib/libwfdmmservice.so
 vendor/lib/libwfdmodulehdcpsession.so
 vendor/lib64/libwfdhdcpcp.so
 
+# ARCore
+vendor/bin/hw/vendor.fih.hardware.box@1.0-service
+vendor/bin/hw/vendor.fih.hardware.ifaa@1.0-service
+vendor/bin/hw/vendor.fih.hardware.iface@1.0-service
+
+# Fido
+vendor/lib/libFidoCrypto_vendor.so
+vendor/lib64/libFidoCrypto_vendor.so
+
+# Qteeconnector
+vendor/bin/hw/vendor.qti.hardware.qteeconnector@1.0-service
+vendor/etc/init/vendor.qti.hardware.qteeconnector@1.0-service.rc
+vendor/lib/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
+vendor/lib/libQTEEConnector_vendor.so
+vendor/lib/vendor.qti.hardware.qteeconnector@1.0.so
+vendor/lib64/hw/vendor.qti.hardware.qteeconnector@1.0-impl.so
+vendor/lib64/libQTEEConnector_vendor.so
+vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so
+
+# Factory
+framework/vendor.qti.data.factory-V1.0-java.jar
+vendor/bin/hw/vendor.qti.hardware.factory@1.0-service
+vendor/etc/init/vendor.qti.hardware.factory@1.0-service.rc
+vendor/etc/permissions/vendor.qti.hardware.factory.xml
+vendor/lib/hw/vendor.qti.hardware.factory@1.0-impl.so
+vendor/lib/vendor.qti.data.factory@1.0.so
+vendor/lib/vendor.qti.hardware.factory@1.0.so
+vendor/lib64/hw/vendor.qti.hardware.factory@1.0-impl.so
+vendor/lib64/vendor.qti.data.factory@1.0.so
+vendor/lib64/vendor.qti.hardware.factory@1.0.so
+
+# SSR
+vendor/bin/ssr_diag
+vendor/bin/ssr_setup
+vendor/bin/subsystem_ramdump
+vendor/lib/libSubSystemShutdown.so
+vendor/lib/libsubsystem_control.so
+vendor/lib64/libSubSystemShutdown.so
+vendor/lib64/libsubsystem_control.so
+
+# Misc
+vendor/bin/hw/vendor.qti.hardware.qdutils_disp@1.0-service-qti
+vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti
+vendor/bin/hw/vendor.nxp.hardware.nfc@1.1-service
+vendor/bin/hw/vendor.sec.hardware.nfc@1.1-service
+vendor/firmware/iris3.fw
+vendor/firmware/iris3_inParm1.txt
+vendor/firmware/iris3_inParm10.txt
+vendor/firmware/iris3_inParm11.txt
+vendor/firmware/iris3_inParm12.txt
+vendor/firmware/iris3_inParm13.txt
+vendor/firmware/iris3_inParm14.txt
+vendor/firmware/iris3_inParm15.txt
+vendor/firmware/iris3_inParm16.txt
+vendor/firmware/iris3_inParm17.txt
+vendor/firmware/iris3_inParm18.txt
+vendor/firmware/iris3_inParm2.txt
+vendor/firmware/iris3_inParm3.txt
+vendor/firmware/iris3_inParm4.txt
+vendor/firmware/iris3_inParm5.txt
+vendor/firmware/iris3_inParm6.txt
+vendor/firmware/iris3_inParm7.txt
+vendor/firmware/iris3_inParm8.txt
+vendor/firmware/iris3_inParm9.txt
