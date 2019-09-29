@@ -248,19 +248,45 @@ PRODUCT_PACKAGES += \
 # Init
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.mmi.ramdump.rc \
-    init.mmi.usb.rc \
-    init.mmi.usb.sh \
-    init.qcom.rc \
+    init.C1N.lcm.rc \
+    init.DRG.nfc.rc \
+    init.DRG.target.rc \
+    init.DRG.tp.rc \
+    init.PL2.wifi.rc \
+    init.c1n.fqc.rc \
+    init.c1n.poweroff_charging.rc \
+    init.fih.elabel.rc \
+    init.fingerprint.elan.rc \
+    init.fingerprint.focal9362_tas.rc \
+    init.fingerprint.fpc1035_tas.rc \
+    init.fingerprint.gxfp3208_b2n.rc \
+    init.fingerprint.gxfp3258_drg.rc \
+    init.fingerprint.gxfp5288_c1n.rc \
+    init.msm.usb.configfs.rc \
     init.power.rc \
+    init.qcom.battery.rc \
+    init.qcom.emmc.rc \
+    init.qcom.factory.rc \
+    init.qcom.fs.rc \
+    init.qcom.lcm.rc \
+    init.qcom.ramdump.rc \
+    init.qcom.rc \
+    init.qcom.sensor.rc \
+    init.qcom.target.rc \
+    init.qcom.tp.rc \
+    init.qcom.usb.rc \
+    init.target.rc \
+    init.vibrator.rc \
     init.class_main.sh \
     init.qcom.early_boot.sh \
     init.qcom.post_boot.sh \
     init.qcom.sensors.sh \
     init.qcom.sh \
-    init.qcom.power.sh \
+    init.qcom.usb.sh \
     init.qti.qseecomd.sh \
-    ueventd.qcom.rc 
+    move_time_data.sh \
+    wlan_carrier_bin.sh \
+    ueventd.qcom.rc
 
 # IPACM
 PRODUCT_PACKAGES += \
