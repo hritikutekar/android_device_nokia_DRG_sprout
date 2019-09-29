@@ -227,28 +227,45 @@ function configure_zram_parameters() {
     MemTotal=${MemTotalStr:16:8}
 
     low_ram=`getprop ro.config.low_ram`
-
+    device_name=`getprop ro.boot.device`
+    product_name=`getprop ro.product.name`
+    
+    zram_size=$1
     # Zram disk - 75% for Go devices.
     # For 512MB Go device, size = 384MB, set same for Non-Go.
     # For 1GB Go device, size = 768MB, set same for Non-Go.
     # For >=2GB Non-Go device, size = 1GB
     # And enable lz4 zram compression for Go targets.
+
+    if [ "$low_ram" == "true" ]; then
+        echo lz4 > /sys/block/zram0/comp_algorithm
+    fi
+
     if [ -f /sys/block/zram0/disksize ]; then
         if [ $MemTotal -le 524288 ]; then
             echo 402653184 > /sys/block/zram0/disksize
         elif [ $MemTotal -le 1048576 ]; then
             echo 805306368 > /sys/block/zram0/disksize
         else
-            # Set Zram disk size=1GB for >=2GB Non-Go targets.
-            echo 1073741824 > /sys/block/zram0/disksize
+            if [ "$zram_size" == "" ]; then
+                # Set Zram disk size=1GB for >=2GB Non-Go targets.
+                echo 1073741824 > /sys/block/zram0/disksize
+            # For PL2 ROW device
+            elif [ "$product_name" == "Plate2_00WW" ]; then
+                echo lz4 > /sys/block/zram0/comp_algorithm
+                echo 8 > /sys/block/zram0/max_comp_streams
+                echo 1610612736 > /sys/block/zram0/disksize
+            else
+                echo lz4 > /sys/block/zram0/comp_algorithm
+                echo $zram_size > /sys/block/zram0/disksize
+            fi
+        fi
+        # change for more free memory in PL2,start
+        if [ "$device_name" == "PL2" ]; then
+            echo 100642 > /proc/sys/vm/min_free_kbytes
         fi
         mkswap /dev/block/zram0
         swapon /dev/block/zram0 -p 32758
-
-        # Enable lz4 compression for Go targets
-        if [ "$low_ram" == "true" ]; then
-            echo lz4 > /sys/block/zram0/comp_algorithm
-        fi
     fi
 }
 
@@ -305,10 +322,8 @@ function enable_swap() {
     fi
 }
 
-# Motorola: We don't use this function.  Renaming it in case  QCOM
-#           adds a new call to it.
-function configure_memory_parameters_DO_NOT_CALL() {
-    # Set Memory paremeters.
+function configure_memory_parameters() {
+    # Set Memory parameters.
     #
     # Set per_process_reclaim tuning parameters
     # All targets will use vmpressure range 50-70,
@@ -339,8 +354,76 @@ else
     MemTotalStr=`cat /proc/meminfo | grep MemTotal`
     MemTotal=${MemTotalStr:16:8}
 
+    # Read adj series and set adj threshold for PPR and ALMK.
+    # This is required since adj values change from framework to framework.
+    adj_series=`cat /sys/module/lowmemorykiller/parameters/adj`
+    adj_1="${adj_series#*,}"
+    set_almk_ppr_adj="${adj_1%%,*}"
+
+    # PPR and ALMK should not act on HOME adj and below.
+    # Normalized ADJ for HOME is 6. Hence multiply by 6
+    # ADJ score represented as INT in LMK params, actual score can be in decimal
+    # Hence add 6 considering a worst case of 0.9 conversion to INT (0.9*6).
+    # For uLMK + Memcg, this will be set as 6 since adj is zero.
+    set_almk_ppr_adj=$(((set_almk_ppr_adj * 6) + 6))
+    echo $set_almk_ppr_adj > /sys/module/lowmemorykiller/parameters/adj_max_shift
+    echo $set_almk_ppr_adj > /sys/module/process_reclaim/parameters/min_score_adj
+
+    #Set other memory parameters
+    echo 1 > /sys/module/process_reclaim/parameters/enable_process_reclaim
+    echo 70 > /sys/module/process_reclaim/parameters/pressure_max
+    echo 30 > /sys/module/process_reclaim/parameters/swap_opt_eff
+    echo 1 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
+    if [ "$arch_type" == "aarch64" ] && [ $MemTotal -gt 4194304 ]; then
+        # for 4G up devices
+        echo 10 > /sys/module/process_reclaim/parameters/pressure_min
+        echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
+        echo "36864,46080,55296,64512,161280,262144" > /sys/module/lowmemorykiller/parameters/minfree
+        echo "0,100,200,300,800,906" > /sys/module/lowmemorykiller/parameters/adj
+        echo 314572 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
+        echo 51200 > /proc/sys/vm/extra_free_kbytes
+        echo 8 > /sys/block/zram0/max_comp_streams
+        configure_zram_parameters 1610612736
+    elif [ "$arch_type" == "aarch64" ] && [ $MemTotal -gt 3145728 ]; then
+        # for 4G devices
+        echo 10 > /sys/module/process_reclaim/parameters/pressure_min
+        echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
+        echo "18432,23040,27648,32256,161280,161280" > /sys/module/lowmemorykiller/parameters/minfree
+        echo "0,100,200,300,800,906" > /sys/module/lowmemorykiller/parameters/adj
+        echo 250000 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
+        echo 51200 > /proc/sys/vm/extra_free_kbytes
+        echo 8 > /sys/block/zram0/max_comp_streams
+        configure_zram_parameters 1610612736
+    elif [ "$arch_type" == "aarch64" ] && [ $MemTotal -gt 2097152 ]; then
+        # for 3G devices
+        echo 30 > /sys/module/process_reclaim/parameters/pressure_min
+        echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
+        echo "18432,23040,27648,32256,161280,161280" > /sys/module/lowmemorykiller/parameters/minfree
+        echo "0,100,200,300,800,906" > /sys/module/lowmemorykiller/parameters/adj
+        #echo 100642 > /proc/sys/vm/min_free_kbytes
+        echo 8 > /sys/block/zram0/max_comp_streams
+        echo 250000 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
+        echo 100 >/proc/sys/vm/swappiness
+        product_name=`getprop ro.product.name`
+        if [ "$product_name" = "Plate2_00WW" ]; then
+            echo "18432,23040,27648,80640,138240,161280" > /sys/module/lowmemorykiller/parameters/minfree
+        fi
+        configure_zram_parameters 1610612736
+    elif [ "$arch_type" == "aarch64" ] && [ $MemTotal -gt 1048576 ]; then
+        # for 2G devices
+        echo 10 > /sys/module/process_reclaim/parameters/pressure_min
+        echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
+        echo "14746,18432,22118,25805,40000,55000" > /sys/module/lowmemorykiller/parameters/minfree
+        echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
+        configure_zram_parameters
+    elif [ "$arch_type" == "aarch64" ]; then
+        echo 50 > /sys/module/process_reclaim/parameters/pressure_min
+        echo 512 > /sys/module/process_reclaim/parameters/per_swap_size
+        echo "14746,18432,22118,25805,40000,55000" > /sys/module/lowmemorykiller/parameters/minfree
+        echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
+        configure_zram_parameters
     # Set parameters for 32-bit Go targets.
-    if [ $MemTotal -le 1048576 ] && [ "$low_ram" == "true" ]; then
+    elif [ $MemTotal -le 1048576 ] && [ "$low_ram" == "true" ]; then
         # Disable KLMK, ALMK, PPR & Core Control for Go devices
         echo 0 > /sys/module/lowmemorykiller/parameters/enable_lmk
         echo 0 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
@@ -422,8 +505,8 @@ else
 
     # Set allocstall_threshold to 0 for all targets.
     # Set swappiness to 100 for all targets
-    echo 0 > /sys/module/vmpressure/parameters/allocstall_threshold
-    echo 100 > /proc/sys/vm/swappiness
+    echo 70 > /sys/module/vmpressure/parameters/allocstall_threshold
+    echo 60 > /proc/sys/vm/swappiness
 
     configure_zram_parameters
 
@@ -1902,7 +1985,7 @@ case "$target" in
             echo -6 > /sys/devices/system/cpu/cpu6/sched_load_boost
 
             echo 614400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-            echo 1094400 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+            echo 633600 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
 
             # cpuset settings
             echo 0-3 > /dev/cpuset/background/cpus
@@ -1954,6 +2037,12 @@ case "$target" in
             echo 80 > /proc/sys/kernel/sched_group_downmigrate
             echo 90 > /proc/sys/kernel/sched_group_upmigrate
             echo 1 > /proc/sys/kernel/sched_walt_rotate_big_tasks
+
+            # Enable min frequency adjustment for big cluster
+            if [ -f /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_cluster ]; then
+                echo "4-7" > /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_cluster
+            fi
+            echo 1 > /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_adjust
 
             ;;
         esac
@@ -2165,8 +2254,7 @@ case "$target" in
                 # Enable timer migration to little cluster
                 echo 1 > /proc/sys/kernel/power_aware_timer_migration
                 # Set Memory parameters
-                #configure_memory_parameters
-
+                configure_memory_parameters
             ;;
             *)
 
@@ -2212,10 +2300,13 @@ case "$target" in
                      echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/rate_limit_us
                      #set the hispeed_freq
                      echo 1497600 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq
-                     #default value for hispeed_load is 90, for sdm439 it should be 85
-                     echo 85 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load
-                     echo 1305600 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-
+                     echo 80 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load
+                     echo 960000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+                     # sched_load_boost as -6 is equivalent to target load as 85.
+                     echo -6 > /sys/devices/system/cpu/cpu0/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu1/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu2/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu3/sched_load_boost
 
                      ## enable governor for power cluster
                      echo 1 > /sys/devices/system/cpu/cpu4/online
@@ -2223,16 +2314,19 @@ case "$target" in
                      echo 0 > /sys/devices/system/cpu/cpu4/cpufreq/schedutil/rate_limit_us
                      #set the hispeed_freq
                      echo 998400 > /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_freq
-                     #default value for hispeed_load is 90, for sdm439 it should be 85
-                     echo 90 > /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_load
+                     echo 85 > /sys/devices/system/cpu/cpu4/cpufreq/schedutil/hispeed_load
                      echo 768000 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
-
+                     # sched_load_boost as -6 is equivalent to target load as 85.
+                     echo -6 > /sys/devices/system/cpu/cpu4/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu5/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu6/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu7/sched_load_boost
 
                      # EAS scheduler (big.Little cluster related) settings
                      echo 93 > /proc/sys/kernel/sched_upmigrate
                      echo 83 > /proc/sys/kernel/sched_downmigrate
-                     #echo 140 > /proc/sys/kernel/sched_group_upmigrate
-                     #echo 120 > /proc/sys/kernel/sched_group_downmigrate
+                     echo 140 > /proc/sys/kernel/sched_group_upmigrate
+                     echo 120 > /proc/sys/kernel/sched_group_downmigrate
 
                      # cpuset settings
                      #echo 0-3 > /dev/cpuset/background/cpus
@@ -2254,6 +2348,13 @@ case "$target" in
                      echo 40 > /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres
                      echo 100 > /sys/devices/system/cpu/cpu0/core_ctl/offline_delay_ms
                      echo 1 > /sys/devices/system/cpu/cpu0/core_ctl/is_big_cluster
+                     echo 4 > /sys/devices/system/cpu/cpu0/core_ctl/task_thres
+
+                     # Big cluster min frequency adjust settings
+                     if [ -f /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_cluster ]; then
+                         echo "0-3" > /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_cluster
+                     fi
+                     echo 1305600 > /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_floor
                  ;;
                  *)
                      # Apply settings for sdm429/sda429
@@ -2263,10 +2364,13 @@ case "$target" in
                      echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/rate_limit_us
                      #set the hispeed_freq
                      echo 1305600 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq
-                     #default value for hispeed_load is 90, for sdm429 it should be 85
-                     echo 85 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load
+                     echo 80 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_load
                      echo 960000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-
+                     # sched_load_boost as -6 is equivalent to target load as 85.
+                     echo -6 > /sys/devices/system/cpu/cpu0/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu1/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu2/sched_load_boost
+                     echo -6 > /sys/devices/system/cpu/cpu3/sched_load_boost
 
                      # Bring up all cores online
                      echo 1 > /sys/devices/system/cpu/cpu1/online
@@ -2289,6 +2393,12 @@ case "$target" in
 
                 # Enable low power modes
                 echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
+
+                case "$soc_id" in
+                     "353" | "363" )
+                     echo 1 > /sys/module/big_cluster_min_freq_adjust/parameters/min_freq_adjust
+                     ;;
+                esac
             ;;
         esac
     ;;
@@ -2351,6 +2461,7 @@ case "$target" in
             echo 1 > /proc/sys/kernel/sched_restrict_cluster_spill
             echo 100000 > /proc/sys/kernel/sched_short_burst_ns
             echo 1 > /proc/sys/kernel/sched_prefer_sync_wakee_to_waker
+            echo 20 > /proc/sys/kernel/sched_small_wakee_task_load
 
             # cpuset settings
             echo 0-3 > /dev/cpuset/background/cpus
@@ -2423,6 +2534,9 @@ case "$target" in
             # re-enable thermal and BCL hotplug
             echo 1 > /sys/module/msm_thermal/core_control/enabled
 
+            #Enable input boost configuration
+            echo "0:1401600" > /sys/module/cpu_boost/parameters/input_boost_freq
+            echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
             # Set Memory parameters
             configure_memory_parameters
 
@@ -2456,23 +2570,27 @@ case "$target" in
             done
             echo "cpufreq" > /sys/class/devfreq/soc:qcom,mincpubw/governor
 
+            # Start cdsprpcd only for sdm660 and disable for sdm630
+            start vendor.cdsprpcd
 
             # Start Host based Touch processing
                 case "$hw_platform" in
                         "MTP" | "Surf" | "RCM" | "QRD" )
-                        start_hbtp
+                        echo  "Stop hbtp"
+                        #start_hbtp  remove QC touch solution
                         ;;
                 esac
             ;;
         esac
-        #Apply settings for sdm630
+        #Apply settings for sdm630 and Tahaa
         case "$soc_id" in
-            "318" | "327" )
+            "318" | "327" | "385" )
 
             # Start Host based Touch processing
             case "$hw_platform" in
                 "MTP" | "Surf" | "RCM" | "QRD" )
-                start_hbtp
+                echo  "Stop hbtp"
+                #start_hbtp remove QC touch solution
                 ;;
             esac
 
@@ -2489,12 +2607,11 @@ case "$target" in
             #init task load, restrict wakeups to preferred cluster
             echo 15 > /proc/sys/kernel/sched_init_task_load
             echo 1 > /proc/sys/kernel/sched_restrict_cluster_spill
-            # Disable the small task package feature.
-            echo 0 > /proc/sys/kernel/sched_short_burst_ns
+            echo 50000 > /proc/sys/kernel/sched_short_burst_ns
 
             # cpuset settings
-            #echo 0-3 > /dev/cpuset/background/cpus
-            #echo 0-3 > /dev/cpuset/system-background/cpus
+            echo 0-3 > /dev/cpuset/background/cpus
+            echo 0-3 > /dev/cpuset/system-background/cpus
 
             # disable thermal bcl hotplug to switch governor
             echo 0 > /sys/module/msm_thermal/core_control/enabled
@@ -2594,22 +2711,11 @@ case "$target" in
                 echo -n enable > $mode
             done
 
+            #Enable input boost configuration
+            echo "4:1401600" > /sys/module/cpu_boost/parameters/input_boost_freq
+            echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
             # Set Memory parameters
-            # configure_memory_parameters
-            # For memory size > 2G, enable the AMLK. This help to launch latency
-            arch_type=`uname -m`
-            MemTotalStr=`cat /proc/meminfo | grep MemTotal`
-            MemTotal=${MemTotalStr:16:8}
-            if [ "$arch_type" == "aarch64" ] && [ $MemTotal -gt 2097152 ]; then
-                adj_series=`cat /sys/module/lowmemorykiller/parameters/adj`
-                adj_1="${adj_series#*,}"
-                almk_ppr_adj="${adj_1%%,*}"
-                almk_ppr_adj=$(((almk_ppr_adj * 6) + 6))
-                echo 1 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
-                echo 80 > /sys/module/vmpressure/parameters/allocstall_threshold
-                echo $almk_ppr_adj > /sys/module/lowmemorykiller/parameters/adj_max_shift
-                echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
-            fi
+            configure_memory_parameters
 
             # Enable bus-dcvs
             for cpubw in /sys/class/devfreq/*qcom,cpubw*
@@ -2643,8 +2749,6 @@ case "$target" in
             echo "cpufreq" > /sys/class/devfreq/soc:qcom,mincpubw/governor
             ;;
         esac
-	# Log kernel wake-up source
-	echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
     ;;
 esac
 
@@ -2768,6 +2872,132 @@ case "$target" in
             echo N > /sys/module/lpm_levels/L3/cpu5/ret/idle_enabled
             echo N > /sys/module/lpm_levels/L3/cpu6/ret/idle_enabled
             echo N > /sys/module/lpm_levels/L3/cpu7/ret/idle_enabled
+
+            # cpuset parameters
+            echo 0-5 > /dev/cpuset/background/cpus
+            echo 0-5 > /dev/cpuset/system-background/cpus
+
+            # Turn off scheduler boost at the end
+            echo 0 > /proc/sys/kernel/sched_boost
+
+            # Turn on sleep modes.
+            echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
+            ;;
+        esac
+    ;;
+esac
+
+case "$target" in
+    "talos")
+
+        #Apply settings for talos
+        # Set the default IRQ affinity to the silver cluster. When a
+        # CPU is isolated/hotplugged, the IRQ affinity is adjusted
+        # to one of the CPU from the default IRQ affinity mask.
+        echo 3f > /proc/irq/default_smp_affinity
+
+        if [ -f /sys/devices/soc0/soc_id ]; then
+                soc_id=`cat /sys/devices/soc0/soc_id`
+        else
+                soc_id=`cat /sys/devices/system/soc/soc0/id`
+        fi
+
+        case "$soc_id" in
+            "355" | "369" )
+
+      # Core control parameters on silver
+      echo 0 0 0 0 1 1 > /sys/devices/system/cpu/cpu0/core_ctl/not_preferred
+      echo 4 > /sys/devices/system/cpu/cpu0/core_ctl/min_cpus
+      echo 60 > /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres
+      echo 40 > /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres
+      echo 100 > /sys/devices/system/cpu/cpu0/core_ctl/offline_delay_ms
+      echo 0 > /sys/devices/system/cpu/cpu0/core_ctl/is_big_cluster
+      echo 8 > /sys/devices/system/cpu/cpu0/core_ctl/task_thres
+      echo 0 > /sys/devices/system/cpu/cpu6/core_ctl/enable
+
+
+      # Setting b.L scheduler parameters
+      # default sched up and down migrate values are 90 and 85
+      echo 65 > /proc/sys/kernel/sched_downmigrate
+      echo 71 > /proc/sys/kernel/sched_upmigrate
+      # default sched up and down migrate values are 100 and 95
+      echo 85 > /proc/sys/kernel/sched_group_downmigrate
+      echo 100 > /proc/sys/kernel/sched_group_upmigrate
+      echo 1 > /proc/sys/kernel/sched_walt_rotate_big_tasks
+
+      # configure governor settings for little cluster
+      echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+      echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/rate_limit_us
+      echo 1209600 > /sys/devices/system/cpu/cpu0/cpufreq/schedutil/hispeed_freq
+      echo 576000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+
+      # configure governor settings for big cluster
+      echo "schedutil" > /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor
+      echo 0 > /sys/devices/system/cpu/cpu6/cpufreq/schedutil/rate_limit_us
+      echo 1209600 > /sys/devices/system/cpu/cpu6/cpufreq/schedutil/hispeed_freq
+      echo 768000 > /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq
+
+      # sched_load_boost as -6 is equivalent to target load as 85. It is per cpu tunable.
+      echo -6 >  /sys/devices/system/cpu/cpu6/sched_load_boost
+      echo -6 >  /sys/devices/system/cpu/cpu7/sched_load_boost
+      echo 85 > /sys/devices/system/cpu/cpu6/cpufreq/schedutil/hispeed_load
+
+      echo "0:1209600" > /sys/module/cpu_boost/parameters/input_boost_freq
+      echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
+
+      # Set Memory parameters
+      configure_memory_parameters
+
+      # Enable bus-dcvs
+      for device in /sys/devices/platform/soc
+      do
+          for cpubw in $device/*cpu-cpu-llcc-bw/devfreq/*cpu-cpu-llcc-bw
+          do
+	      echo "bw_hwmon" > $cpubw/governor
+	      echo 50 > $cpubw/polling_interval
+	      echo "2288 4577 7110 9155 12298 14236" > $cpubw/bw_hwmon/mbps_zones
+	      echo 4 > $cpubw/bw_hwmon/sample_ms
+	      echo 68 > $cpubw/bw_hwmon/io_percent
+	      echo 20 > $cpubw/bw_hwmon/hist_memory
+	      echo 0 > $cpubw/bw_hwmon/hyst_length
+	      echo 80 > $cpubw/bw_hwmon/down_thres
+	      echo 0 > $cpubw/bw_hwmon/guard_band_mbps
+	      echo 250 > $cpubw/bw_hwmon/up_scale
+	      echo 1600 > $cpubw/bw_hwmon/idle_mbps
+	  done
+
+	  for llccbw in $device/*cpu-llcc-ddr-bw/devfreq/*cpu-llcc-ddr-bw
+	  do
+	      echo "bw_hwmon" > $llccbw/governor
+	      echo 40 > $llccbw/polling_interval
+	      echo "1144 1720 2086 2929 3879 5931 6881" > $llccbw/bw_hwmon/mbps_zones
+	      echo 4 > $llccbw/bw_hwmon/sample_ms
+	      echo 68 > $llccbw/bw_hwmon/io_percent
+	      echo 20 > $llccbw/bw_hwmon/hist_memory
+	      echo 0 > $llccbw/bw_hwmon/hyst_length
+	      echo 80 > $llccbw/bw_hwmon/down_thres
+	      echo 0 > $llccbw/bw_hwmon/guard_band_mbps
+	      echo 250 > $llccbw/bw_hwmon/up_scale
+	      echo 1600 > $llccbw/bw_hwmon/idle_mbps
+	  done
+
+	    #Enable mem_latency governor for L3, LLCC, and DDR scaling
+	  for memlat in $device/*cpu*-lat/devfreq/*cpu*-lat
+	  do
+	      echo "mem_latency" > $memlat/governor
+	      echo 10 > $memlat/polling_interval
+	      echo 400 > $memlat/mem_latency/ratio_ceil
+          done
+
+	  #Enable compute governor for gold latfloor
+	  for latfloor in $device/*cpu*-ddr-latfloor*/devfreq/*cpu-ddr-latfloor*
+	  do
+	      echo "compute" > $latfloor/governor
+	      echo 10 > $latfloor/polling_interval
+	  done
+
+      done
+
 
             # cpuset parameters
             echo 0-5 > /dev/cpuset/background/cpus
@@ -3526,10 +3756,16 @@ case "$target" in
 	echo 120 > /sys/module/cpu_boost/parameters/input_boost_ms
 
         echo 120 > /proc/sys/vm/watermark_scale_factor
-        echo 1 > /proc/sys/vm/reap_mem_on_sigkill
 
         echo 0-3 > /dev/cpuset/background/cpus
         echo 0-3 > /dev/cpuset/system-background/cpus
+
+        # Enable oom_reaper
+	if [ -f /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
+		echo 1 > /sys/module/lowmemorykiller/parameters/oom_reaper
+	else
+		echo 1 > /proc/sys/vm/reap_mem_on_sigkill
+	fi
 
 	# Enable bus-dcvs
 	for device in /sys/devices/platform/soc
@@ -3783,12 +4019,9 @@ case "$target" in
 	echo N > /sys/module/lpm_levels/system/perf/perf-l2-ret/idle_enabled
 	echo N > /sys/module/lpm_levels/parameters/sleep_disabled
 
-        #echo 0-3 > /dev/cpuset/background/cpus
-        #echo 0-3 > /dev/cpuset/system-background/cpus
+        echo 0-3 > /dev/cpuset/background/cpus
+        echo 0-3 > /dev/cpuset/system-background/cpus
         echo 0 > /proc/sys/kernel/sched_boost
-
-	# Log kernel wake-up source
-	echo 1 > /sys/module/msm_show_resume_irq/parameters/debug_mask
 
         # Set Memory parameters
         configure_memory_parameters
@@ -3966,7 +4199,7 @@ case "$target" in
         start mpdecision
         echo 512 > /sys/block/mmcblk0/bdi/read_ahead_kb
     ;;
-    "msm8994" | "msm8992" | "msm8996" | "msm8998" | "sdm660" | "apq8098_latv" | "sdm845" | "sdm710" | "msmnile")
+    "msm8994" | "msm8992" | "msm8996" | "msm8998" | "sdm660" | "apq8098_latv" | "sdm845" | "sdm710" | "msmnile" | "msmsteppe")
         setprop vendor.post_boot.parsed 1
     ;;
     "apq8084")

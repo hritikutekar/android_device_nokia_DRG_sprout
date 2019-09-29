@@ -31,10 +31,7 @@
 firmware_directories /vendor/firmware_mnt/image/
 
 # the DIAG device node is not world writable/readable.
-/dev/diag                 0660   system     oem_2950
-/dev/ttydiag0             0660   system     oem_2950
-/dev/ttydiag1             0660   system     oem_2950
-/dev/ttydiag2             0660   system     oem_2950
+/dev/diag                 0660   system     oem_2901
 
 /dev/genlock              0666   system     system
 /dev/wlan                 0660   wifi       wifi
@@ -125,7 +122,6 @@ firmware_directories /vendor/firmware_mnt/image/
 /dev/at_usb0              0640   radio      radio
 /dev/at_mdm0              0640   radio      radio
 /dev/video*               0660   system     camera
-/dev/v4l2-hal-ctrl        0660   system     camera
 /dev/media*               0660   system     camera
 /dev/v4l-subdev*          0660   system     camera
 /dev/qseecom              0660   system     drmrpc
@@ -261,7 +257,6 @@ firmware_directories /vendor/firmware_mnt/image/
 /sys/devices/virtual/input/input*                   enable_ps_sensor 0660  system   input
 /sys/devices/virtual/input/input*                   set_delay_ms     0660  system   input
 /sys/devices/virtual/input/input*                   do_flush         0660  system   input
-/dev/laser                0660   system     camera
 
 # vm_bms
 /dev/vm_bms               0660   system     system
@@ -294,6 +289,9 @@ firmware_directories /vendor/firmware_mnt/image/
 # SSR devices
 /dev/subsys_*         0640   system     system
 
+# Ultrasound device
+/dev/usf1                 0660   system     system
+
 # Ramdump devices
 /dev/ramdump*             0640   system     system
 
@@ -305,11 +303,13 @@ firmware_directories /vendor/firmware_mnt/image/
 /dev/hbtp_vm              0660   system     system
 
 # Add device block for FRP
-/dev/block/bootdevice/by-name/frp       0600   system     system
-/dev/block/platform/soc/*/by-name/frp   0600   system     system
-
-# Add device block for FRP with soc.0
-/dev/block/platform/soc.0/7824900.sdhci/by-name/config    0600   system     system
+/dev/block/platform/soc/7824900.sdhci/by-name/config    0600   system     system
+/dev/block/platform/soc/7464900.sdhci/by-name/frp       0600   system     system
+/dev/block/platform/soc/624000.ufshc/by-name/frp        0600   system     system
+/dev/block/platform/soc/1da4000.ufshc/by-name/frp       0600   system     system
+/dev/block/platform/soc/c0c4000.sdhci/by-name/frp       0600   system     system
+/dev/block/platform/soc/1d84000.ufshc/by-name/frp       0600   system     system
+/dev/block/platform/soc/7c4000.sdhci/by-name/frp        0600   system     system
 
 # This is temporary while using SD card for initial bring-up
 /dev/block/platform/soc/8804000.sdhci/by-name/frp       0600   system     system
@@ -331,77 +331,7 @@ firmware_directories /vendor/firmware_mnt/image/
 # NPU device
 /dev/msm_npu             0644   system     system
 
-# I2C
-/dev/i2c-*                0660   system     system
-
-#JOT fixture devices for AMPS factory testing
-/dev/hidraw0              0660   root       oem_5004
-/dev/hidraw1              0660   root       oem_5004
-
-# MOD device
-/sys/devices/soc/75b5000.i2c/i2c-7/7-0072 irq_enable 0660 oem_5004 oem_5004
-/sys/devices/soc/0.apba_ctrl apba_enable 0660 oem_5004 oem_5020
-/sys/devices/soc/0.apba_ctrl apba_mode 0660 oem_5004 oem_5020
-/sys/devices/soc/0.apba_ctrl flash_partition 0220 oem_5004 oem_5020
-/sys/devices/soc/0.apba_ctrl unipro_mid 0440 root oem_5020
-/sys/devices/soc/0.apba_ctrl unipro_pid 0440 root oem_5020
-/sys/devices/soc/0.apba_ctrl vid 0440 root oem_5020
-/sys/devices/soc/0.apba_ctrl pid 0440 root oem_5020
-/sys/devices/soc/0.apba_ctrl fw_version 0440 root oem_5020
-/sys/devices/soc/0.apba_ctrl fw_version_str 0440 root oem_5020
-/sys/devices/soc/soc:muc_svc@0/mods_interfaces/* hotplug 0660 root oem_5020
-/sys/devices/soc/soc:muc_svc@0/mods_interfaces/* uevent 0660 root oem_5020
-/sys/devices/soc/soc:muc_svc@0/mods_interfaces/* current_limit 0220 root oem_5020
-/sys/devices/soc/soc:muc_svc@0/mods_interfaces/* rtc_sync 0220 root oem_5020
-/sys/devices/soc/soc:muc_svc@0 flashmode 0660 root oem_5020
-/sys/devices/soc/soc:muc_svc@0 reset 0660 root oem_5020
-/sys/devices/soc/0.muc/0.muc:muc_svc@0/mods_interfaces/* hotplug 0660 root oem_5020
-/sys/devices/soc/0.muc/0.muc:muc_svc@0/mods_interfaces/* uevent 0660 root oem_5020
-/sys/devices/soc/0.muc/0.muc:muc_svc@0 flashmode 0660 root oem_5020
-/sys/devices/platform/mods_ap uevent 0660 root oem_5020
-/sys/devices/platform/mods_ap/* uevent 0660 root oem_5020
-/sys/devices/platform/mods_ap/greybus1 uevent 0664 root oem_5020
-
-# MOD display device
-/sys/devices/platform/mods_ap/greybus1/*/*/display/display* state 0660 root oem_5020
-/sys/devices/platform/mods_ap/greybus1/*/*/display/display* config 0444 root oem_5020
-/sys/devices/platform/mods_ap/greybus1/*/*/display/display* notification 0660 root oem_5020
-
-# MOD light device
-/sys/devices/platform/mods_ap/greybus1/*/*/leds/mod_light*::backlight brightness 0660 root oem_5020
-
-# IIO (dynamic sensors)
-/sys/devices/iio_sysfs_trigger/add_trigger          0220    system      system
-/sys/devices/iio_sysfs_trigger/remove_trigger       0220    system      system
-
-/sys/devices/iio:device* buffer/*                   0664    system      system
-/sys/devices/iio:device* scan_elements/in_*_en      0664    system      system
-/sys/devices/iio:device* trigger/current_trigger    0664    system      system
-/sys/devices/iio:device* in_sampling_frequency      0664    system      system
-/sys/devices/iio:device* max_latency_ns             0664    system      system
-/sys/devices/iio:device* flush                      0220    system      system
-
-/dev/iio:device*                                    0600    system      system
-
-# RAW device
-/dev/gbraw*             0660   root   oem_5020
-# Audio device
-/sys/devices/platform/mods_codec.0 uevent 0660 root oem_5020
-/sys/devices/platform/mods_codec.0/* uevent 0660 root oem_5020
-
-# MOD camera device
-/dev/mot_camera_ext*               0660   system     camera
-/sys/devices/virtual/video4linux/mot_camera_ext* open_mode 0660 system camera
-/sys/devices/virtual/video4linux/mot_camera_ext* uevent 0660 root oem_5020
-/sys/devices/virtual/video4linux/video* open_mode 0660 system camera
-/sys/devices/virtual/video4linux/video* uevent 0660 root oem_5020
-
-# Trustonic TEE device
-/dev/mobicore             0600   system     system
-/dev/mobicore-user        0666   system     system
-
-# DTV
-/dev/isdbt     0660   oem_5019   oem_5019
-
-# Egistec fingerprint
-/dev/esfp0          0660   system     system
+# USB role switch
+/sys/class/dual_role_usb/*	data_role	0660	system	system
+/sys/class/dual_role_usb/*	power_role	0660	system	system
+/sys/class/dual_role_usb/*	mode		0660	system	system

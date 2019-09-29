@@ -52,7 +52,7 @@ case "$baseband" in
 esac
 
 case "$baseband" in
-    "msm" | "csfb" | "svlte2a" | "mdm" | "mdm2" | "sglte" | "sglte2" | "dsda2" | "unknown" | "dsda3" | "sdm" | "sdx")
+    "msm" | "csfb" | "svlte2a" | "mdm" | "mdm2" | "sglte" | "sglte2" | "dsda2" | "unknown" | "dsda3" | "sdm" | "sdx" | "sm6")
 
     if [ -f /vendor/firmware_mnt/verinfo/ver_info.txt ]; then
         modem=`cat /vendor/firmware_mnt/verinfo/ver_info.txt |
@@ -101,9 +101,6 @@ case "$baseband" in
             start ril-daemon
             start vendor.ril-daemon
         fi
-    else
-        start ril-daemon
-        start vendor.ril-daemon
     fi
 
     # Get ril-daemon status again to ensure that we have latest info

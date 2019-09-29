@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2012, 2014-2018, The Linux Foundation. All rights reserved.
+# Copyright (c) 2009-2012, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -25,16 +25,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-on init
-    setprop ro.vendor.hw.dualsim ${ro.boot.dualsim}
-    setprop ro.vendor.hw.device ${ro.boot.device}
-    setprop ro.vendor.hw.radio ${ro.boot.radio}
-    setprop ro.vendor.hw.fps true
-    setprop ro.vendor.hw.imager 16MP
-    setprop ro.product.manufacturer Nokia
-
-on property:ro.vendor.hw.dualsim=true
-    setprop persist.radio.multisim.config dsds
-
-on property:ro.vendor.hw.dualsim=false
-    setprop persist.radio.multisim.config ""
+# msm specific files that need to be created on /data
+on early-boot
+#NFC hal surfix
+setprop ro.hardware.nfc_nci nqx.default
